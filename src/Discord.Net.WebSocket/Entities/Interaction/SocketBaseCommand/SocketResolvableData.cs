@@ -7,8 +7,8 @@ namespace Discord.WebSocket
     {
         internal readonly Dictionary<ulong, SocketGuildUser> GuildMembers
            = new Dictionary<ulong, SocketGuildUser>();
-        internal readonly Dictionary<ulong, SocketGlobalUser> Users
-            = new Dictionary<ulong, SocketGlobalUser>();
+        internal readonly Dictionary<ulong, SocketUser> Users
+            = new Dictionary<ulong, SocketUser>();
         internal readonly Dictionary<ulong, SocketChannel> Channels
             = new Dictionary<ulong, SocketChannel>();
         internal readonly Dictionary<ulong, SocketRole> Roles
@@ -30,7 +30,7 @@ namespace Discord.WebSocket
             {
                 foreach (var user in resolved.Users.Value)
                 {
-                    var socketUser = discord.GetOrCreateUser(discord.State, user.Value);
+                    var socketUser = discord.GetOrCreateTemporaryUser(discord.State, user.Value);
 
                     Users.Add(ulong.Parse(user.Key), socketUser);
                 }
@@ -119,7 +119,7 @@ namespace Discord.WebSocket
                         }
                     }
 
-                    author ??= discord.State.GetOrAddUser(msg.Value.Author.Value.Id, _ => SocketGlobalUser.Create(discord, discord.State, msg.Value.Author.Value));
+                    author ??= discord.GetOrCreateTemporaryUser(discord.State, msg.Value.Author.Value);
 
                     var message = SocketMessage.Create(discord, discord.State, author, channel, msg.Value);
                     Messages.Add(message.Id, message);

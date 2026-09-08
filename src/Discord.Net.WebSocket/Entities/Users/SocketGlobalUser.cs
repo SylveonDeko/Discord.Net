@@ -50,6 +50,15 @@ namespace Discord.WebSocket
             return entity;
         }
 
+        internal bool IsReferenced
+        {
+            get
+            {
+                lock (_lockObj)
+                    return _references > 0;
+            }
+        }
+
         internal void AddRef()
         {
             checked
@@ -62,7 +71,7 @@ namespace Discord.WebSocket
         {
             lock (_lockObj)
             {
-                if (--_references <= 0)
+                if (_references == 0 || --_references == 0)
                     discord.RemoveUser(Id);
             }
         }

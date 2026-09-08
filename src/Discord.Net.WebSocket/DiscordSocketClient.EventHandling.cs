@@ -583,7 +583,7 @@ public partial class DiscordSocketClient
                                 if (user != null)
                                     user.Update(State, data.User);
                                 else
-                                    user = State.GetOrAddUser(data.User.Id, (x) => SocketGlobalUser.Create(this, State, data.User));
+                                    user = GetOrCreateTemporaryUser(State, data.User);
 
                                 await TimedInvokeAsync(_userLeftEvent, nameof(UserLeft), guild, user).ConfigureAwait(false);
                             }
@@ -1689,10 +1689,10 @@ public partial class DiscordSocketClient
                             }
 
                             SocketUser user = data.User.IsSpecified
-                                ? State.GetOrAddUser(data.User.Value.Id, (_) => SocketGlobalUser.Create(this, State, data.User.Value))
+                                ? GetOrCreateTemporaryUser(State, data.User.Value)
                                 : guild != null
                                     ? guild.AddOrUpdateUser(data.Member.Value) // null if the bot scope isn't set, so the guild cannot be retrieved.
-                                    : State.GetOrAddUser(data.Member.Value.User.Id, (_) => SocketGlobalUser.Create(this, State, data.Member.Value.User));
+                                    : GetOrCreateTemporaryUser(State, data.Member.Value.User);
 
                             SocketChannel channel = null;
                             if (data.ChannelId.IsSpecified)

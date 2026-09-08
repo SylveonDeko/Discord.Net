@@ -147,6 +147,12 @@ namespace Discord.WebSocket
         {
             foreach (var guild in _guilds.Values)
                 guild.PurgeUserCache();
+
+            foreach (var user in _users.Values)
+            {
+                if (!user.IsReferenced)
+                    _users.TryRemove(user.Id, out _);
+            }
         }
 
         internal SocketApplicationCommand GetCommand(ulong id)
