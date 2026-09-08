@@ -119,10 +119,13 @@ jobs:
         - name: Pack Metapackage
           run: nuget pack "src/Discord.Net/Discord.Net.nuspec" -OutputDirectory ${{ env.ArtifactStagingDirectory }} -NonInteractive -p "suffix=${{ env.Suffix }}"
 
-        - name: Set API Keys
-          run: |
-            nuget setApiKey ${{ secrets.NIGHTLY_FEED_API_KEY }} -Source ${{ vars.NIGHTLY_FEED }}
-            nuget setApiKey ${{ secrets.GITHUB_TOKEN }} -Source ${{ env.REPOSITORY_URL }}
+        - name: Set Nightly Feed API Key
+          if: vars.PUSH_NIGHTLY_CUSTOM == 'true'
+          run: nuget setApiKey ${{ secrets.NIGHTLY_FEED_API_KEY }} -Source ${{ vars.NIGHTLY_FEED }}
+
+        - name: Set GitHub Packages API Key
+          if: vars.PUSH_NIGHTLY_GITHUB == 'true'
+          run: nuget setApiKey ${{ secrets.GITHUB_TOKEN }} -Source ${{ env.REPOSITORY_URL }}
 
         - name: Push Nightly
           if: vars.PUSH_NIGHTLY_CUSTOM == 'true'
