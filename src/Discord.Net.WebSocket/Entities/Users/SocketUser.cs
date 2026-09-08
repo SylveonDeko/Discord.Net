@@ -145,10 +145,10 @@ namespace Discord.WebSocket
             return hasChanges;
         }
 
-        internal virtual void Update(PresenceModel model)
+        internal virtual bool Update(PresenceModel model)
         {
             Presence ??= new SocketPresence();
-            Presence.Update(model);
+            return Presence.Update(model);
         }
 
         /// <inheritdoc />

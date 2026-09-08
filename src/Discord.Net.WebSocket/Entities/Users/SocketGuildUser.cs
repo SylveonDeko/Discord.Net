@@ -65,7 +65,7 @@ namespace Discord.WebSocket
 
         /// <inheritdoc />
         public GuildPermissions GuildPermissions => new GuildPermissions(Permissions.ResolveGuild(Guild, this));
-        internal override SocketPresence Presence { get; set; }
+        internal override SocketPresence Presence { get => GlobalUser.Presence; set => GlobalUser.Presence = value; }
 
         /// <inheritdoc />
         public override bool IsWebhook => false;
@@ -224,13 +224,8 @@ namespace Discord.WebSocket
                 _premiumSinceTicks = model.PremiumSince.Value?.UtcTicks;
         }
 
-        internal override void Update(PresenceModel model)
-        {
-            Presence ??= new SocketPresence();
-
-            Presence.Update(model);
-            GlobalUser.Update(model);
-        }
+        internal override bool Update(PresenceModel model)
+            => GlobalUser.Update(model);
 
         private void UpdateRoles(ulong[] roleIds)
         {

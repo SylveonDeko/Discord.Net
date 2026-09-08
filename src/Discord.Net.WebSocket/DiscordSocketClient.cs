@@ -78,6 +78,7 @@ namespace Discord.WebSocket
         internal UdpSocketProvider UdpSocketProvider { get; private set; }
         internal WebSocketProvider WebSocketProvider { get; private set; }
         internal bool AlwaysDownloadUsers { get; private set; }
+        internal bool CacheMembersFromPresenceUpdates { get; private set; }
         internal int? HandlerTimeout { get; private set; }
         internal bool AlwaysDownloadDefaultStickers { get; private set; }
         internal bool AlwaysResolveStickers { get; private set; }
@@ -156,6 +157,7 @@ namespace Discord.WebSocket
             UdpSocketProvider = config.UdpSocketProvider;
             WebSocketProvider = config.WebSocketProvider;
             AlwaysDownloadUsers = config.AlwaysDownloadUsers;
+            CacheMembersFromPresenceUpdates = config.CacheMembersFromPresenceUpdates;
             AlwaysDownloadDefaultStickers = config.AlwaysDownloadDefaultStickers;
             AlwaysResolveStickers = config.AlwaysResolveStickers;
             LogGatewayIntentWarnings = config.LogGatewayIntentWarnings;

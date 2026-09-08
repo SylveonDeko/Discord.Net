@@ -1306,10 +1306,16 @@ public partial class DiscordSocketClient
                                 if (user == null)
                                 {
                                     if (data.Status == UserStatus.Offline)
-                                    {
                                         return;
+
+                                    if (CacheMembersFromPresenceUpdates)
+                                        user = guild.AddOrUpdateUser(data);
+                                    else
+                                    {
+                                        user = State.GetUser(data.User.Id);
+                                        if (user == null)
+                                            return;
                                     }
-                                    user = guild.AddOrUpdateUser(data);
                                 }
                                 else
                                 {
@@ -1331,10 +1337,14 @@ public partial class DiscordSocketClient
                                 }
                             }
 
-                            var before = user.Presence?.Clone();
+                            var hasPresenceSubscribers = _presenceUpdated.HasSubscribers ||
+                                (_shardedClient?._presenceUpdated.HasSubscribers ?? false);
+
+                            var before = hasPresenceSubscribers ? user.Presence?.Clone() : null;
                             user.Update(State, data.User);
-                            user.Update(data);
-                            await TimedInvokeAsync(_presenceUpdated, nameof(PresenceUpdated), user, before, user.Presence).ConfigureAwait(false);
+
+                            if (user.Update(data) && hasPresenceSubscribers)
+                                await TimedInvokeAsync(_presenceUpdated, nameof(PresenceUpdated), user, before, user.Presence).ConfigureAwait(false);
                         }
                         break;
                         case "TYPING_START":

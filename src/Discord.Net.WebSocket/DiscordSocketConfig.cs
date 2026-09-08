@@ -135,6 +135,18 @@ namespace Discord.WebSocket
         public bool AlwaysDownloadUsers { get; set; } = false;
 
         /// <summary>
+        ///     Gets or sets whether or not guild members should be added to the cache when a presence update is
+        ///     received for a user who is not already cached.
+        /// </summary>
+        /// <remarks>
+        ///     When this is enabled, every user that comes online in any guild is added to that guild's member cache
+        ///     and is never evicted unless the <see cref="GatewayIntents.GuildMembers"/> intent is also enabled, which
+        ///     causes the member cache to grow without bound on large bots. Presences are still tracked for users that
+        ///     are already cached when this is disabled.
+        /// </remarks>
+        public bool CacheMembersFromPresenceUpdates { get; set; } = false;
+
+        /// <summary>
         ///     Gets or sets the timeout for event handlers, in milliseconds, after which a warning will be logged.
         ///     Setting this property to <see langword="null" />disables this check.
         /// </summary>

@@ -35,11 +35,111 @@ namespace Discord.WebSocket
             return entity;
         }
 
-        internal void Update(Model model)
+        /// <summary>
+        ///     Applies the presence frame, returning whether anything actually changed.
+        /// </summary>
+        /// <remarks>
+        ///     Discord sends one presence frame per mutual guild, so the same presence arrives once for every guild
+        ///     the user shares with the client. Comparing against the model before converting it lets the redundant
+        ///     frames be dropped without building any entities.
+        /// </remarks>
+        internal bool Update(Model model)
         {
-            Status = model.Status;
-            ActiveClients = ConvertClientTypesDict(model.ClientStatus.GetValueOrDefault()) ?? ImmutableArray<ClientType>.Empty;
-            Activities = ConvertActivitiesList(model.Activities) ?? ImmutableArray<IActivity>.Empty;
+            var hasChanges = false;
+
+            if (Status != model.Status)
+            {
+                Status = model.Status;
+                hasChanges = true;
+            }
+
+            var clientStatus = model.ClientStatus.GetValueOrDefault();
+            if (!ClientTypesEqual(ActiveClients, clientStatus))
+            {
+                ActiveClients = ConvertClientTypesDict(clientStatus);
+                hasChanges = true;
+            }
+
+            if (!ActivitiesEqual(Activities, model.Activities))
+            {
+                Activities = ConvertActivitiesList(model.Activities);
+                hasChanges = true;
+            }
+
+            return hasChanges;
+        }
+
+        private static bool ClientTypesEqual(IReadOnlyCollection<ClientType> current, IDictionary<string, string> clientTypesDict)
+        {
+            if (current == null)
+                return false;
+            if (clientTypesDict == null || clientTypesDict.Count == 0)
+                return current.Count == 0;
+
+            var count = 0;
+            foreach (var key in clientTypesDict.Keys)
+            {
+                if (!Enum.TryParse(key, true, out ClientType type))
+                    continue;
+                if (!current.Contains(type))
+                    return false;
+                count++;
+            }
+            return count == current.Count;
+        }
+
+        private static bool ActivitiesEqual(IReadOnlyCollection<IActivity> current, IList<API.Game> models)
+        {
+            if (current == null)
+                return false;
+            if (models == null || models.Count == 0)
+                return current.Count == 0;
+            if (current.Count != models.Count)
+                return false;
+
+            var index = 0;
+            foreach (var activity in current)
+            {
+                if (!ActivityEquals(activity, models[index++]))
+                    return false;
+            }
+            return true;
+        }
+
+        private static bool ActivityEquals(IActivity activity, API.Game model)
+        {
+            if (activity == null || activity.Name != model.Name)
+                return false;
+
+            switch (activity)
+            {
+                case CustomStatusGame custom:
+                    return model.Id.GetValueOrDefault() == "custom"
+                        && custom.State == model.State.GetValueOrDefault()
+                        && custom.Emote?.Name == (model.Emoji.IsSpecified ? model.Emoji.Value.Name : null);
+                case SpotifyGame spotify:
+                    return model.SyncId.IsSpecified
+                        && spotify.TrackId == model.SyncId.Value
+                        && spotify.TrackTitle == model.Details.GetValueOrDefault();
+                case RichGame rich:
+                    return model.ApplicationId.IsSpecified
+                        && rich.ApplicationId == model.ApplicationId.Value
+                        && rich.Details == model.Details.GetValueOrDefault()
+                        && rich.State == model.State.GetValueOrDefault();
+                case StreamingGame streaming:
+                    return model.StreamUrl.IsSpecified
+                        && streaming.Url == model.StreamUrl.Value
+                        && streaming.Details == model.Details.GetValueOrDefault();
+                case Game game:
+                    return model.Id.GetValueOrDefault() != "custom"
+                        && !model.SyncId.IsSpecified
+                        && !model.ApplicationId.IsSpecified
+                        && !model.StreamUrl.IsSpecified
+                        && game.Type == (model.Type.GetValueOrDefault() ?? ActivityType.Playing)
+                        && game.Details == model.Details.GetValueOrDefault();
+                default:
+                    return false;
+            }
         }
 
         /// <summary>
@@ -57,14 +157,14 @@ namespace Discord.WebSocket
         {
             if (clientTypesDict == null || clientTypesDict.Count == 0)
                 return ImmutableHashSet<ClientType>.Empty;
-            var set = new HashSet<ClientType>();
+            var builder = ImmutableHashSet.CreateBuilder<ClientType>();
             foreach (var key in clientTypesDict.Keys)
             {
                 if (Enum.TryParse(key, true, out ClientType type))
-                    set.Add(type);
+                    builder.Add(type);
                 // quietly discard ClientTypes that do not match
             }
-            return set.ToImmutableHashSet();
+            return builder.ToImmutable();
         }
         /// <summary>
         ///     Creates a new <see cref="IReadOnlyCollection{T}"/> containing all the activities
@@ -76,14 +176,14 @@ namespace Discord.WebSocket
         /// <returns>
         ///     A list of all <see cref="IActivity"/> that this user currently has available.
         /// </returns>
-        private static IImmutableList<IActivity> ConvertActivitiesList(IList<API.Game> activities)
+        private static IReadOnlyCollection<IActivity> ConvertActivitiesList(IList<API.Game> activities)
         {
             if (activities == null || activities.Count == 0)
-                return ImmutableList<IActivity>.Empty;
-            var list = new List<IActivity>();
+                return ImmutableArray<IActivity>.Empty;
+            var builder = ImmutableArray.CreateBuilder<IActivity>(activities.Count);
             foreach (var activity in activities)
-                list.Add(activity.ToEntity());
-            return list.ToImmutableList();
+                builder.Add(activity.ToEntity());
+            return builder.MoveToImmutable();
         }
 
         /// <summary>
