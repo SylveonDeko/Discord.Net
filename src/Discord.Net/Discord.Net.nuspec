@@ -1,42 +1,42 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>Discord.Net</id>
+    <id>Mewdeko.Discord.Net</id>
     <version>3.20.1$suffix$</version>
-    <title>Discord.Net</title>
+    <title>Mewdeko.Discord.Net</title>
     <authors>Discord.Net Contributors</authors>
-    <owners>foxbot</owners>
-    <description>An asynchronous API wrapper for Discord. This metapackage includes all of the optional Discord.Net components.</description>
+    <owners>SylveonDeko</owners>
+    <description>An asynchronous API wrapper for Discord. This metapackage includes all of the optional Discord.Net components. This is an opinionated fork of Discord.Net, tuned for Mewdeko.</description>
     <tags>discord;discordapp</tags>
-    <projectUrl>https://github.com/discord-net/Discord.Net</projectUrl>
+    <projectUrl>https://github.com/SylveonDeko/Discord.Net</projectUrl>
     <license type="expression">MIT</license>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <icon>PackageLogo.png</icon>
     <readme>NUGET_README.md</readme>
     <dependencies>
         <group targetFramework="net10.0">
-          <dependency id="Discord.Net.Core" version="3.20.1$suffix$" />
-          <dependency id="Discord.Net.Rest" version="3.20.1$suffix$" />
-          <dependency id="Discord.Net.WebSocket" version="3.20.1$suffix$" />
-          <dependency id="Discord.Net.Commands" version="3.20.1$suffix$" />
-          <dependency id="Discord.Net.Webhook" version="3.20.1$suffix$" />
-          <dependency id="Discord.Net.Interactions" version="3.20.1$suffix$" />
+          <dependency id="Mewdeko.Discord.Net.Core" version="3.20.1$suffix$" />
+          <dependency id="Mewdeko.Discord.Net.Rest" version="3.20.1$suffix$" />
+          <dependency id="Mewdeko.Discord.Net.WebSocket" version="3.20.1$suffix$" />
+          <dependency id="Mewdeko.Discord.Net.Commands" version="3.20.1$suffix$" />
+          <dependency id="Mewdeko.Discord.Net.Webhook" version="3.20.1$suffix$" />
+          <dependency id="Mewdeko.Discord.Net.Interactions" version="3.20.1$suffix$" />
         </group>
         <group targetFramework="net9.0">
-            <dependency id="Discord.Net.Core" version="3.20.1$suffix$" />
-            <dependency id="Discord.Net.Rest" version="3.20.1$suffix$" />
-            <dependency id="Discord.Net.WebSocket" version="3.20.1$suffix$" />
-            <dependency id="Discord.Net.Commands" version="3.20.1$suffix$" />
-            <dependency id="Discord.Net.Webhook" version="3.20.1$suffix$" />
-            <dependency id="Discord.Net.Interactions" version="3.20.1$suffix$" />
+            <dependency id="Mewdeko.Discord.Net.Core" version="3.20.1$suffix$" />
+            <dependency id="Mewdeko.Discord.Net.Rest" version="3.20.1$suffix$" />
+            <dependency id="Mewdeko.Discord.Net.WebSocket" version="3.20.1$suffix$" />
+            <dependency id="Mewdeko.Discord.Net.Commands" version="3.20.1$suffix$" />
+            <dependency id="Mewdeko.Discord.Net.Webhook" version="3.20.1$suffix$" />
+            <dependency id="Mewdeko.Discord.Net.Interactions" version="3.20.1$suffix$" />
         </group>
         <group targetFramework="net8.0">
-            <dependency id="Discord.Net.Core" version="3.20.1$suffix$" />
-            <dependency id="Discord.Net.Rest" version="3.20.1$suffix$" />
-            <dependency id="Discord.Net.WebSocket" version="3.20.1$suffix$" />
-            <dependency id="Discord.Net.Commands" version="3.20.1$suffix$" />
-            <dependency id="Discord.Net.Webhook" version="3.20.1$suffix$" />
-            <dependency id="Discord.Net.Interactions" version="3.20.1$suffix$" />
+            <dependency id="Mewdeko.Discord.Net.Core" version="3.20.1$suffix$" />
+            <dependency id="Mewdeko.Discord.Net.Rest" version="3.20.1$suffix$" />
+            <dependency id="Mewdeko.Discord.Net.WebSocket" version="3.20.1$suffix$" />
+            <dependency id="Mewdeko.Discord.Net.Commands" version="3.20.1$suffix$" />
+            <dependency id="Mewdeko.Discord.Net.Webhook" version="3.20.1$suffix$" />
+            <dependency id="Mewdeko.Discord.Net.Interactions" version="3.20.1$suffix$" />
         </group>
     </dependencies>
   </metadata>

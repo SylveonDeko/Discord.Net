@@ -1,14 +1,15 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <VersionPrefix>3.20.1</VersionPrefix>
+        <PackageId>Mewdeko.$(MSBuildProjectName)</PackageId>
         <LangVersion>latest</LangVersion>
         <Authors>Discord.Net Contributors</Authors>
         <PackageTags>discord;discordapp</PackageTags>
-        <PackageProjectUrl>https://github.com/Discord-Net/Discord.Net</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/SylveonDeko/Discord.Net</PackageProjectUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageIcon>PackageLogo.png</PackageIcon>
         <RepositoryType>git</RepositoryType>
-        <RepositoryUrl>git://github.com/Discord-Net/Discord.Net</RepositoryUrl>
+        <RepositoryUrl>https://github.com/SylveonDeko/Discord.Net</RepositoryUrl>
         <PackageReadmeFile>NUGET_README.md</PackageReadmeFile>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(IsTagBuild)' == 'true' ">
