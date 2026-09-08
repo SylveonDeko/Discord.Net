@@ -80,6 +80,10 @@ jobs:
       runs-on: ubuntu-22.04
       needs: [build]
       if: github.event_name != 'pull_request'
+      permissions:
+        contents: read
+        packages: write
+        id-token: write
       env:
         IsTagBuild: false
         ArtifactStagingDirectory: "artifacts"
@@ -117,7 +121,6 @@ jobs:
 
         - name: Set API Keys
           run: |
-            nuget setApiKey ${{ secrets.NUGET_API_KEY }} -Source https://api.nuget.org/v3/index.json
             nuget setApiKey ${{ secrets.NIGHTLY_FEED_API_KEY }} -Source ${{ vars.NIGHTLY_FEED }}
             nuget setApiKey ${{ secrets.GITHUB_TOKEN }} -Source ${{ env.REPOSITORY_URL }}
 
@@ -126,9 +129,16 @@ jobs:
           run: nuget push "${{ env.ArtifactStagingDirectory }}/*.nupkg" -SkipDuplicate -Source ${{ vars.NIGHTLY_FEED }}
 
         - name: Push Nightly to GitHub Pacakges
-          if: vars.PUSH_NIGHTLY_GITHUB == 'true'            
+          if: vars.PUSH_NIGHTLY_GITHUB == 'true'
           run: nuget push "${{ env.ArtifactStagingDirectory }}/*.nupkg" -SkipDuplicate -Source ${{ env.REPOSITORY_URL }}
+
+        - name: NuGet login
+          if: env.IsTagBuild == 'true' && vars.PUSH_NUGET == 'true'
+          id: nuget-login
+          uses: NuGet/login@v1
+          with:
+            user: ${{ secrets.NUGET_USER }}
 
         - name: Push Release
           if: env.IsTagBuild == 'true' && vars.PUSH_NUGET == 'true'
-          run: nuget push "${{ env.ArtifactStagingDirectory }}/*.nupkg" -SkipDuplicate -Source https://api.nuget.org/v3/index.json
+          run: dotnet nuget push "${{ env.ArtifactStagingDirectory }}/*.nupkg" --skip-duplicate --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
