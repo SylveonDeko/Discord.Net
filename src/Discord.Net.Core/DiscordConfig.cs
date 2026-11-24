@@ -256,6 +256,15 @@ namespace Discord
         internal const double HeartbeatIntervalFactor = 0.9;
 
         /// <summary>
+        ///     Returns the shortest wait between two heartbeats, in milliseconds.
+        /// </summary>
+        /// <remarks>
+        ///     The wait is the reduced interval minus the measured latency, which reaches zero when the latency
+        ///     is as long as the interval.
+        /// </remarks>
+        internal const int MinHeartbeatDelay = 1000;
+
+        /// <summary>
         ///     Returns the maximum length of a voice channel status.
         /// </summary>
         public const int MaxVoiceChannelStatusLength = 500;

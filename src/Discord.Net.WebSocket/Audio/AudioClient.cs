@@ -745,7 +745,7 @@ namespace Discord.Audio
                         await _audioLogger.WarningAsync("Failed to send heartbeat", ex).ConfigureAwait(false);
                     }
 
-                    int delay = Math.Max(0, delayInterval - Latency);
+                    int delay = Math.Max(DiscordConfig.MinHeartbeatDelay, delayInterval - Latency);
                     await Task.Delay(delay, cancelToken).ConfigureAwait(false);
                 }
 

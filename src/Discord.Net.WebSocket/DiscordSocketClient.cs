@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -947,12 +948,18 @@ namespace Discord.WebSocket
                     {
                         await ApiClient.SendHeartbeatAsync(_lastSeq).ConfigureAwait(false);
                     }
+                    catch (WebSocketException ex)
+                    {
+                        await _gatewayLogger.WarningAsync("Heartbeat Errored", ex).ConfigureAwait(false);
+                        _connection.Error(ex);
+                        return;
+                    }
                     catch (Exception ex)
                     {
                         await _gatewayLogger.WarningAsync("Heartbeat Errored", ex).ConfigureAwait(false);
                     }
 
-                    int delay = Math.Max(0, delayInterval - Latency);
+                    int delay = Math.Max(DiscordConfig.MinHeartbeatDelay, delayInterval - Latency);
                     await Task.Delay(delay, cancelToken).ConfigureAwait(false);
                 }
                 await _gatewayLogger.DebugAsync("Heartbeat Stopped").ConfigureAwait(false);
